@@ -25,7 +25,7 @@ EOS
     fi
   fi
   
-  local releases_url='https://builds.hex.pm/builds/otp/${arch}/ubuntu-${ubuntu_release}/builds.txt'
+  local releases_url="https://builds.hex.pm/builds/otp/${arch}/ubuntu-${ubuntu_release}/builds.txt"
 
   if ! curl -fs $releases_url; then
     cat >&2 <<EOS
