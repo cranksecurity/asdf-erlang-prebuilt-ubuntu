@@ -1,7 +1,31 @@
 #!/usr/bin/env bash
 
 download_hex_pm_builds() {
-  local releases_url='https://builds.hex.pm/builds/otp/ubuntu-22.04/builds.txt'
+
+  if [ -x "$(command -v lsb_release)" ]; then
+    ubuntu_release=$(lsb_release -rs)
+  fi
+
+  if [ -x "$(command -v dpkg)" ]; then
+    arch=$(dpkg --print-architecture)
+  fi
+
+  if [[ -v ARCH ]]; then
+    arch=${ARCH}
+  fi
+
+  if [[ -v ImageOS ]]; then
+    if [[ "$ImageOS" =~ ^ubuntu([0-9]{2})$ ]]; then
+      ubuntu_release="${BASH_REMATCH[1]}.04"
+    else
+      cat <<EOS
+==> ImageOS environment variable didn't match expected format of ubuntuXY where xy is the ubuntu version number (22,24,etc)
+EOS
+      exit 1
+    fi
+  fi
+  
+  local releases_url="https://builds.hex.pm/builds/otp/${arch}/ubuntu-${ubuntu_release}/builds.txt"
 
   if ! curl -fs $releases_url; then
     cat >&2 <<EOS
